@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/launchdarkly/go-sdk-common/v3/ldcontext"
+	"github.com/launchdarkly/go-sdk-common/v3/ldreason"
 	ld "github.com/launchdarkly/go-server-sdk/v7"
 	"github.com/launchdarkly/go-server-sdk/v7/ldcomponents"
 	"github.com/pkg/errors"
@@ -60,10 +61,12 @@ func main() {
 	defaultVal := false
 	val := defaultVal
 	apiKey := os.Getenv("LD_SDK_KEY")
+	var detail ldreason.EvaluationDetail
 
 	ldc, err := ldClient(apiKey, DefaultConfig("recart-test", "1.0.0"), 50*time.Second)
 	if err == nil {
-		val, err = ldc.BoolVariation(flag, context, defaultVal)
+		val, detail, err = ldc.BoolVariationDetail(flag, context, defaultVal)
+		log.Println(detail)
 	}
 	if err != nil {
 		log.Println("FeatureFlags Error:", flag, err)
